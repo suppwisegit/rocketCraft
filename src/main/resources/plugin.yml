@@ -7,8 +7,10 @@ website: "https://example.com/rocketcraft"
 commands:
   rocket:
     description: Hauptkommando fuer RocketCraft
-    usage: /rocket
+    usage: /rocket <list|give>
     permission: rocketcraft.command.rocket
 permissions:
   rocketcraft.command.rocket:
     default: true
+  rocketcraft.command.rocket.give:
+    default: op
