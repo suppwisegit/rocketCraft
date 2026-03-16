@@ -155,7 +155,7 @@ public class RocketUseListener implements Listener {
             }
             case THUNDERSTRIKE -> {
                 location.getWorld().strikeLightningEffect(location);
-                location.getWorld().spawnParticle(Particle.FLASH, location, 3, 0.2, 0.2, 0.2, 0);
+                location.getWorld().spawnParticle(Particle.END_ROD, location, 20, 0.35, 0.35, 0.35, 0.05);
                 location.getWorld().playSound(location, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0F, 1.0F);
                 damageNearby(location, shooter, 3.2, 7.0, 1.1);
             }
