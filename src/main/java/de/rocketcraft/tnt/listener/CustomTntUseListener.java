@@ -128,7 +128,7 @@ public class CustomTntUseListener implements Listener {
         data.set(primedTntTypeKey, PersistentDataType.STRING, spec.type().name());
         data.set(primedTntOwnerKey, PersistentDataType.STRING, player.getUniqueId().toString());
 
-        player.getWorld().spawnParticle(Particle.SMOKE_LARGE, player.getEyeLocation(), 20, 0.2, 0.2, 0.2, 0.02);
+        player.getWorld().spawnParticle(Particle.LARGE_SMOKE, player.getEyeLocation(), 20, 0.2, 0.2, 0.2, 0.02);
         player.playSound(player.getLocation(), Sound.ENTITY_TNT_PRIMED, 1.0F, 1.05F);
     }
 
@@ -174,7 +174,7 @@ public class CustomTntUseListener implements Listener {
         center.getWorld().playSound(center, Sound.BLOCK_GLASS_BREAK, 1.0F, 0.5F);
 
         for (LivingEntity living : nearbyLiving(center, 4.0, ownerUuid)) {
-            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 120, 3));
+            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 120, 3));
             living.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 80, 1));
             living.setFreezeTicks(Math.max(living.getFreezeTicks(), 120));
             living.damage(4.0);
@@ -211,7 +211,7 @@ public class CustomTntUseListener implements Listener {
         for (LivingEntity living : nearbyLiving(center, 5.0, ownerUuid)) {
             living.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0));
             living.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 140, 0));
-            living.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 80, 0));
+            living.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 80, 0));
             living.damage(3.5);
         }
     }
@@ -223,7 +223,7 @@ public class CustomTntUseListener implements Listener {
         for (LivingEntity living : nearbyLiving(center, 5.0, ownerUuid)) {
             Vector knock = living.getLocation().toVector().subtract(center.toVector()).normalize().multiply(0.8).setY(1.0);
             living.setVelocity(living.getVelocity().add(knock));
-            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 2));
+            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 2));
             living.damage(6.0);
         }
     }
@@ -253,7 +253,7 @@ public class CustomTntUseListener implements Listener {
             }
             player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + 8.0));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 120, 1));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 0));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 100, 0));
             player.setFireTicks(0);
         }
     }
@@ -264,7 +264,7 @@ public class CustomTntUseListener implements Listener {
 
         for (LivingEntity living : nearbyLiving(center, 5.0, ownerUuid)) {
             living.setVelocity(living.getVelocity().add(new Vector(0, 1.35, 0)));
-            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 80, 0));
+            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS_FALLING, 80, 0));
             living.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 100, 0));
         }
     }
@@ -288,8 +288,8 @@ public class CustomTntUseListener implements Listener {
 
         for (LivingEntity living : nearbyLiving(center, 4.5, ownerUuid)) {
             living.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 40, 1));
-            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 80, 4));
-            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 120, 2));
+            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 80, 4));
+            living.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 120, 2));
             living.damage(3.0);
         }
     }
@@ -325,7 +325,7 @@ public class CustomTntUseListener implements Listener {
         }, 90L);
 
         for (LivingEntity living : nearbyLiving(center, 4.0, ownerUuid)) {
-            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 140, 5));
+            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 140, 5));
             living.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 100, 1));
             living.damage(3.0);
         }
@@ -351,7 +351,7 @@ public class CustomTntUseListener implements Listener {
             Location destination = center.clone().add((Math.random() - 0.5) * 12.0, 0, (Math.random() - 0.5) * 12.0);
             destination.setY(destination.getWorld().getHighestBlockYAt(destination) + 1.0);
             living.teleport(destination);
-            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, 1));
+            living.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
             living.damage(2.5);
         }
     }
