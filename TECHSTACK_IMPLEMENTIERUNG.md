@@ -6,12 +6,12 @@
 
 ## Laufzeit & API
 - **Server-Plattform:** [Paper](https://papermc.io/software/paper) (Bukkit/Spigot-kompatibel, performant, sehr gut dokumentiert).
-- **Minecraft-Version (Start):** Fokus auf **eine** Zielversion (z. B. 1.21.x), um NMS-/Kompatibilitätsaufwand gering zu halten.
+- **Minecraft-Version (Start):** Fokus auf **eine** Zielversion (**1.20.6**), um NMS-/Kompatibilitätsaufwand gering zu halten.
 - **Plugin-API:** Paper API (Events, Entities, Scheduler, Commands, Permissions).
 
 ## Sprache & Build
 - **Java:** **Java 21** (aktueller Standard für moderne Paper-Versionen).
-- **Build-Tool:** **Gradle (Kotlin DSL)**.
+- **Build-Tool:** **Gradle (Groovy DSL)**.
 - **Dependencies:**
   - `io.papermc.paper:paper-api` als `compileOnly`.
   - Optional später: Config-Library (falls notwendig), sonst zunächst Bukkit/Paper-Config.
@@ -31,15 +31,14 @@
 ## 2) Architekturvorschlag (MVP-fähig)
 
 ## Paketstruktur
-- `de.rocketcraft.plugin` (Root)
-  - `bootstrap` – `JavaPlugin`-Startklasse, Dependency-Wiring
-  - `command` – Commands (`/rocket`, `/rockets`)
-  - `rocket` – Raketenmodelle + Logik
-  - `combat` – Schaden, Team-/Friendly-Fire-Regeln
-  - `effect` – visuelle/akustische Vanilla-Effekte (Partikel, Sounds)
-  - `config` – Laden/Validieren von `config.yml` + `rockets.yml`
-  - `cooldown` – Cooldown-Management
-  - `arena` (später) – Duellzonen/Regeln
+- `de.rocketcraft` (Root)
+  - `RocketCraftPlugin` – `JavaPlugin`-Startklasse, Dependency-Wiring
+  - `command` – Commands (`/rocket`)
+  - `rocket.model` – Raketenmodell (`RocketSpec`)
+  - `rocket.service` – Registry (`RocketRegistry`)
+  - `rocket.type` – Typisierung (`RocketType`)
+
+> Geplante Erweiterungen (`combat`, `effect`, `config`, `cooldown`, `arena`) folgen in spaeteren Phasen der Roadmap.
 
 ## Domänenmodell (Kern)
 - `RocketType`

@@ -23,7 +23,7 @@ von verrueckten Fun-Launches bis zu taktischen/militaerischen Duel-Werkzeugen.
 ## Technischer Stack
 - Java 21
 - Paper API 1.20.6
-- Gradle (Kotlin DSL)
+- Gradle (Groovy DSL)
 
 ## Projektstruktur
 ```text
