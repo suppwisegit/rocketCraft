@@ -4,6 +4,10 @@ import de.rocketcraft.rocket.model.RocketSpec;
 import de.rocketcraft.rocket.service.RocketItemService;
 import de.rocketcraft.rocket.service.RocketRegistry;
 import de.rocketcraft.rocket.type.RocketType;
+import de.rocketcraft.tnt.model.CustomTntSpec;
+import de.rocketcraft.tnt.service.CustomTntItemService;
+import de.rocketcraft.tnt.service.CustomTntRegistry;
+import de.rocketcraft.tnt.type.CustomTntType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,10 +24,15 @@ public class RocketCommand implements CommandExecutor, TabCompleter {
 
     private final RocketRegistry rocketRegistry;
     private final RocketItemService rocketItemService;
+    private final CustomTntRegistry customTntRegistry;
+    private final CustomTntItemService customTntItemService;
 
-    public RocketCommand(RocketRegistry rocketRegistry, RocketItemService rocketItemService) {
+    public RocketCommand(RocketRegistry rocketRegistry, RocketItemService rocketItemService,
+                         CustomTntRegistry customTntRegistry, CustomTntItemService customTntItemService) {
         this.rocketRegistry = rocketRegistry;
         this.rocketItemService = rocketItemService;
+        this.customTntRegistry = customTntRegistry;
+        this.customTntItemService = customTntItemService;
     }
 
     @Override
@@ -31,6 +40,10 @@ public class RocketCommand implements CommandExecutor, TabCompleter {
         if (args.length == 0 || "list".equalsIgnoreCase(args[0])) {
             sender.sendMessage("§6[RocketCraft] §fVerfuegbare Raketen: §e" +
                 rocketRegistry.getAll().stream()
+                    .map(spec -> spec.type().name().toLowerCase(Locale.ROOT))
+                    .collect(Collectors.joining(", ")));
+            sender.sendMessage("§6[RocketCraft] §fVerfuegbare CustomTNTs: §e" +
+                customTntRegistry.getAll().stream()
                     .map(spec -> spec.type().name().toLowerCase(Locale.ROOT))
                     .collect(Collectors.joining(", ")));
             sender.sendMessage("§7Nutze /rocket give <typ> [spieler] [anzahl].");
@@ -52,13 +65,7 @@ public class RocketCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        RocketType type;
-        try {
-            type = RocketType.valueOf(args[1].toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException ex) {
-            sender.sendMessage("§cUnbekannter Typ. Nutze /rocket list.");
-            return true;
-        }
+        String requestedType = args[1].toUpperCase(Locale.ROOT);
 
         Player target;
         if (args.length >= 3) {
@@ -89,17 +96,37 @@ public class RocketCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        RocketSpec spec = rocketRegistry.getByType(type).orElse(null);
-        if (spec == null) {
-            sender.sendMessage("§cDieser Typ ist aktuell nicht registriert.");
+        RocketType rocketType = parseRocketType(requestedType);
+        if (rocketType != null) {
+            RocketSpec spec = rocketRegistry.getByType(rocketType).orElse(null);
+            if (spec == null) {
+                sender.sendMessage("§cDieser Raketentyp ist aktuell nicht registriert.");
+                return true;
+            }
+            target.getInventory().addItem(rocketItemService.createRocketItem(spec, amount));
+            sender.sendMessage("§a" + amount + "x " + rocketType.name() + " an " + target.getName() + " gegeben.");
+            if (!target.equals(sender)) {
+                target.sendMessage("§6[RocketCraft] §fDu hast §e" + amount + "x " + rocketType.name() + " §ferhalten.");
+            }
             return true;
         }
 
-        target.getInventory().addItem(rocketItemService.createRocketItem(spec, amount));
-        sender.sendMessage("§a" + amount + "x " + type.name() + " an " + target.getName() + " gegeben.");
-        if (!target.equals(sender)) {
-            target.sendMessage("§6[RocketCraft] §fDu hast §e" + amount + "x " + type.name() + " §ferhalten.");
+        CustomTntType customTntType = parseCustomTntType(requestedType);
+        if (customTntType != null) {
+            CustomTntSpec spec = customTntRegistry.getByType(customTntType).orElse(null);
+            if (spec == null) {
+                sender.sendMessage("§cDieser CustomTNT-Typ ist aktuell nicht registriert.");
+                return true;
+            }
+            target.getInventory().addItem(customTntItemService.createCustomTntItem(spec, amount));
+            sender.sendMessage("§a" + amount + "x " + customTntType.name() + " an " + target.getName() + " gegeben.");
+            if (!target.equals(sender)) {
+                target.sendMessage("§6[RocketCraft] §fDu hast §e" + amount + "x " + customTntType.name() + " §ferhalten.");
+            }
+            return true;
         }
+
+        sender.sendMessage("§cUnbekannter Typ. Nutze /rocket list.");
         return true;
     }
 
@@ -110,9 +137,7 @@ public class RocketCommand implements CommandExecutor, TabCompleter {
         }
         if (args.length == 2 && "give".equalsIgnoreCase(args[0])) {
             return filterByPrefix(
-                rocketRegistry.getAll().stream()
-                    .map(spec -> spec.type().name().toLowerCase(Locale.ROOT))
-                    .toList(),
+                allTypeSuggestions(),
                 args[1]
             );
         }
@@ -120,6 +145,33 @@ public class RocketCommand implements CommandExecutor, TabCompleter {
             return filterByPrefix(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), args[2]);
         }
         return List.of();
+    }
+
+    private List<String> allTypeSuggestions() {
+        List<String> suggestions = new ArrayList<>();
+        suggestions.addAll(rocketRegistry.getAll().stream()
+            .map(spec -> spec.type().name().toLowerCase(Locale.ROOT))
+            .toList());
+        suggestions.addAll(customTntRegistry.getAll().stream()
+            .map(spec -> spec.type().name().toLowerCase(Locale.ROOT))
+            .toList());
+        return suggestions;
+    }
+
+    private RocketType parseRocketType(String requestedType) {
+        try {
+            return RocketType.valueOf(requestedType);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
+    }
+
+    private CustomTntType parseCustomTntType(String requestedType) {
+        try {
+            return CustomTntType.valueOf(requestedType);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 
     private List<String> filterByPrefix(List<String> options, String prefix) {
