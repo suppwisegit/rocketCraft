@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class RocketRegistry {
 
@@ -32,5 +33,9 @@ public class RocketRegistry {
 
     public Collection<RocketSpec> getAll() {
         return Collections.unmodifiableCollection(rockets.values());
+    }
+
+    public Optional<RocketSpec> getByType(RocketType type) {
+        return Optional.ofNullable(rockets.get(type));
     }
 }

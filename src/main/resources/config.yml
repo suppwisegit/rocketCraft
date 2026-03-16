@@ -1,0 +1,8 @@
+# RocketCraft Basis-Konfiguration
+cooldown-scale: 1.0
+
+# Drop-Chancen fuer mobbasierte Raketen-Loots (0.0 - 1.0)
+drops:
+  creeper-spark: 0.20
+  phantom-boost: 0.18
+  witch-thunderstrike: 0.15

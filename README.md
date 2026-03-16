@@ -4,7 +4,14 @@ RocketCraft ist ein **Paper-Plugin fuer Minecraft Java Edition**, das neue Raket
 von verrueckten Fun-Launches bis zu taktischen/militaerischen Duel-Werkzeugen.
 
 ## Projektstatus
-> Aktuell: **Foundation-Setup** (Grundstruktur + Konzept + Roadmap)
+> Aktuell: **Core Gameplay Loop implementiert**
+
+Enthalten sind jetzt:
+- `/rocket list` und `/rocket give <typ> [spieler] [anzahl]`
+- spielbare Raketen-Effekte fuer `SPARK`, `BOOST`, `THUNDERSTRIKE`
+- serverseitige Cooldowns mit Actionbar-Feedback
+- Crafting-Rezepte fuer die drei Kernraketen
+- mobbasierte Drop-Chancen (Creeper/Phantom/Witch)
 
 ## Ziele
 - Vanilla-nahe Experience ohne Texturepack-Zwang.
@@ -12,7 +19,7 @@ von verrueckten Fun-Launches bis zu taktischen/militaerischen Duel-Werkzeugen.
 - Duell-fokussiertes Gameplay fuer Freundesgruppen.
 - Modulare Architektur fuer spaetere Erweiterungen.
 
-## Geplante Raketen-Typen (erste Iteration)
+## Verfuegbare Raketen-Typen (erste Iteration)
 - `SPARK` – schneller Mini-Schub mit Funken.
 - `BOOST` – starker Luft-Boost fuer Mobility.
 - `CHAFF` – Sichtstoerung/Counter-Tool.
@@ -25,6 +32,48 @@ von verrueckten Fun-Launches bis zu taktischen/militaerischen Duel-Werkzeugen.
 - Paper API 1.20.6
 - Gradle (Groovy DSL)
 
+## Installation Guide (Minecraft / Paper)
+
+### 1) Voraussetzungen
+- **Minecraft Java Edition Server**
+- **Paper 1.20.6** (oder kompatibel)
+- **Java 21** auf dem Server
+
+### 2) Plugin bauen
+Im Projektordner ausfuehren:
+```bash
+./gradlew build
+```
+
+Danach liegt die Plugin-Datei hier:
+```text
+build/libs/rocketCraft-0.1.0-SNAPSHOT.jar
+```
+
+### 3) Auf den Server installieren
+1. Paper-Server einmal starten und wieder stoppen (damit `plugins/` vorhanden ist).
+2. `rocketCraft-0.1.0-SNAPSHOT.jar` nach `<dein-server>/plugins/` kopieren.
+3. Server neu starten.
+
+### 4) Funktionstest im Spiel
+Als OP/Admin im Chat testen:
+```text
+/rocket list
+/rocket give spark
+/rocket give boost <Spielername> 3
+/rocket give thunderstrike <Spielername> 1
+```
+
+### 5) Konfiguration
+Nach dem ersten Start wird `plugins/RocketCraft/config.yml` angelegt.
+Dort kannst du u. a. anpassen:
+- `cooldown-scale`
+- `drops.creeper-spark`
+- `drops.phantom-boost`
+- `drops.witch-thunderstrike`
+
+Nach Aenderungen: Server neu starten oder Plugin neu laden.
+
 ## Projektstruktur
 ```text
 rocketCraft/
@@ -34,35 +83,18 @@ rocketCraft/
 │  ├─ RocketCraftPlugin.java
 │  ├─ command/RocketCommand.java
 │  └─ rocket/
-│     ├─ model/RocketSpec.java
-│     ├─ service/RocketRegistry.java
-│     └─ type/RocketType.java
-├─ src/main/resources/plugin.yml
+│     ├─ listener/
+│     ├─ model/
+│     ├─ service/
+│     └─ type/
+├─ src/main/resources/
+│  ├─ config.yml
+│  └─ plugin.yml
 └─ docs/
    ├─ PROJECT_PLAN.md
    └─ ROCKET_CONCEPTS.md
 ```
 
-## Quickstart (lokal)
-1. Java 21 installieren.
-2. Projekt klonen.
-3. Build ausfuehren:
-   ```bash
-   gradle build
-   ```
-4. Entstehende JAR in den `plugins/`-Ordner eines Paper-Servers legen.
-
-## Nächste sinnvolle Implementierungen
-1. `/rocket give <typ>` inkl. Permission-Checks.
-2. ItemBuilder fuer Raketenitems (Lore, Rarity, Cooldown-Infos).
-3. Impact-System (Projectile + Hit-Resolution).
-4. Config-basierte Balancing-Werte in `config.yml`.
-5. Duel-Mode mit Matchflow.
-
 ## Planung & Konzepte
 - Gesamtplan: [`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md)
 - Kreative Raketenideen: [`docs/ROCKET_CONCEPTS.md`](docs/ROCKET_CONCEPTS.md)
-
----
-Wenn du willst, kann ich im naechsten Schritt direkt den ersten spielbaren Loop bauen:
-**Rakete bekommen -> abschiessen -> Effekt + Cooldown + Trefferlogik**.
